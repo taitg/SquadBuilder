@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 
 /**
  * Class for serving web requests
- * @author taitg
+ * @author Geordie Tait
  *
  */
 public class WebServer extends Thread {
@@ -28,7 +28,10 @@ public class WebServer extends Thread {
 	// port for the WebServer to listen on
 	private int port;
 	
+	// players object containing the list of all players
 	Players players;
+	
+	// the tournament arrangement to display to the user
 	Tournament tournament;
 
 	/**
@@ -37,7 +40,6 @@ public class WebServer extends Thread {
 	 * @param port	Port number to listen on
 	 */
 	public WebServer(int port) {
-		// initialization
 		this.port = port;
 	}
 	
@@ -57,8 +59,9 @@ public class WebServer extends Thread {
 			players = gson.fromJson(new FileReader("players.json"), Players.class);
 			tournament = new Tournament(players, 1);
 		}
-		catch (IOException e) { // TODO more descriptive
-			System.err.println("IOException: " + e.toString());
+		catch (IOException e) {
+			System.err.println("Error: Could not read JSON data.");
+			System.exit(-1);
 		}
 		
 		System.out.println("Server started. Type \"quit\" to stop");
@@ -147,66 +150,59 @@ public class WebServer extends Thread {
 		 * @see java.lang.Runnable#run()
 		 */
 		@Override
-		public void run() { // TODO refactor
-			boolean badRequest = false;
-			boolean notFound = false;
+		public void run() {
+			boolean isBadRequest = false;
+			boolean isNotFound = false;
 			byte[] bytes = new byte[16384];
 			String fileName = "";
 			String output = "";
-			String method = "";
 			
 			try {
 				// read and parse HTTP request
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				OutputStream out = sock.getOutputStream();
 				String request = in.readLine();
-				
 				if (request == null) return;
 				
 				// ensure request is well formed
 				String[] reqSplit = request.split("/");
 				if (reqSplit.length != 3) {
-					badRequest = true;
+					isBadRequest = true;
 				}
 				else {
-					// check the HTTP method TODO this is not used
-					if (reqSplit[0].trim().equals("GET"))
-						method = "GET";
-					else if (reqSplit[0].trim().equals("POST")) {
-						method = "POST";
-					}
-					else
-						badRequest = true;
+					// check the HTTP method
+					if (!reqSplit[0].trim().equals("GET") && !reqSplit[0].trim().equals("POST"))
+						isBadRequest = true;
 					
 					// check if the request is well-formed
 					String[] fileNameSplit = reqSplit[1].split(" ");
 					if (fileNameSplit.length != 2) {
-						badRequest = true;
+						isBadRequest = true;
 					}
 					else {
 						if (!fileNameSplit[1].trim().equals("HTTP")) 
-							badRequest = true;
+							isBadRequest = true;
 						
 						fileName = fileNameSplit[0];
 						
+						// if request is valid and not a file, generate HTML to output
 						if (fileName.equals("") || fileName.equals("index.html") || fileName.startsWith("make?"))
 							output = generateOutput(fileName);
 					}
 				}
 				
-				// determine if requested object exists
+				// determine if requested object exists, unless we are transmitting HTML
 				File f = new File(fileName);
-				if (!f.exists() && output.equals("")) {
-					notFound = true;
-				}
+				if (!f.exists() && output.equals(""))
+					isNotFound = true;
 				
 				// transmit content over existing connection
-				String header = generateHeader(badRequest, notFound, f);
+				String header = generateHeader(isBadRequest, isNotFound, f);
 				out.write(header.getBytes("US-ASCII"));
 				out.flush();
 				
-				// send file if OK
-				if (!badRequest && !notFound && output.equals("")) {					
+				// send file if OK and applicable
+				if (!isBadRequest && !isNotFound && output.equals("")) {					
 					FileInputStream fStream = new FileInputStream(f);
 		            BufferedInputStream fBuffer = new BufferedInputStream(fStream);
 		            int n;
@@ -221,7 +217,7 @@ public class WebServer extends Thread {
 				}
 				
 				// otherwise send output string if OK
-				else if (!badRequest && !output.equals("")) {
+				else if (!isBadRequest && !output.equals("")) {
 					out.write(output.getBytes("US-ASCII"));
 					out.flush();
 				}
@@ -239,24 +235,24 @@ public class WebServer extends Thread {
 		/**
 		 * Generate HTTP response header
 		 * 
-		 * @param badRequest	True if bad request
-		 * @param notFound	True if file not found
+		 * @param isBadRequest	True if bad request
+		 * @param isNotFound	True if file not found
 		 * @param f	File object
-		 * @return
+		 * @return HTTP header string
 		 */
-		private String generateHeader(boolean badRequest, boolean notFound, File f) {
+		private String generateHeader(boolean isBadRequest, boolean isNotFound, File f) {
 			String header = "HTTP/1.1 ";
 
 			// response code
-			if (badRequest) header += "400 Bad Request\r\n";
-			else if (notFound) header += "404 Not Found\r\n";
+			if (isBadRequest) header += "400 Bad Request\r\n";
+			else if (isNotFound) header += "404 Not Found\r\n";
 			else header += "200 OK\r\n";
 			
 			// server name and version
 			header += "Server: SquadBuilder/1.0\r\n";
 			
 			// file info if applicable
-			if (!badRequest && !notFound && f.exists()) {
+			if (!isBadRequest && !isNotFound && f.exists()) {
 				SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss zzz");
 				header += "Last-Modified: " + sdf.format(f.lastModified()) + "\r\n";
 				header += "Content-Length: " + f.length() + "\r\n";
@@ -268,8 +264,8 @@ public class WebServer extends Thread {
 		
 		/**
 		 * Generate HTML output
-		 * @param request
-		 * @return
+		 * @param request Requested content from URL
+		 * @return HTML as a string
 		 */
 		private String generateOutput(String request) {
 			HtmlGenerator html = new HtmlGenerator(tournament, players);
@@ -287,7 +283,7 @@ public class WebServer extends Thread {
 				htmlOut += html.generateWaitList();
 			}
 			
-			// display the waitlist and squads as requested
+			// display the waitlist and squads if requested
 			else if (request.startsWith("make")) {
 				
 				// parse desired number of squads and check for bad inputs

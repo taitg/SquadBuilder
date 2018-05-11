@@ -4,11 +4,12 @@ import java.util.ArrayList;
 
 /**
  * Class representing a squad of players
- * @author taitg
+ * @author Geordie Tait
  *
  */
 public class Squad {
 
+	// the list of players in the squad
 	private ArrayList<Player> members;
 	
 	/**
@@ -20,7 +21,7 @@ public class Squad {
 	
 	/**
 	 * Constructor for copying a squad
-	 * @param original
+	 * @param original Squad to make a copy of
 	 */
 	public Squad(Squad original) {
 		members = new ArrayList<Player>();
@@ -31,7 +32,7 @@ public class Squad {
 	
 	/**
 	 * Get the list of member players
-	 * @return
+	 * @return List of players in squad
 	 */
 	public ArrayList<Player> getMembers() {
 		return members;
@@ -39,7 +40,7 @@ public class Squad {
 	
 	/**
 	 * Add a player to the squad
-	 * @param p
+	 * @param p Player to add
 	 */
 	public void addMember(Player p) {
 		members.add(p);
@@ -47,7 +48,7 @@ public class Squad {
 	
 	/**
 	 * Remove a player from the squad
-	 * @param p
+	 * @param p Player to remove
 	 */
 	public void removeMember(Player p) {
 		members.remove(p);
@@ -55,7 +56,7 @@ public class Squad {
 	
 	/**
 	 * Get the size of the squad
-	 * @return
+	 * @return Number of players in squad
 	 */
 	public int getSize() {
 		return members.size();
@@ -63,7 +64,7 @@ public class Squad {
 	
 	/**
 	 * Get the total skating rating of the squad
-	 * @return
+	 * @return Sum of squad skating ratings
 	 */
 	private int getSkatingTotal() {
 		int result = 0;
@@ -75,7 +76,7 @@ public class Squad {
 	
 	/**
 	 * Get the average skating rating of the squad
-	 * @return
+	 * @return Average of squad skating ratings
 	 */
 	public double getSkatingAvg() {
 		return (double) this.getSkatingTotal() / (double) this.getSize();
@@ -83,7 +84,7 @@ public class Squad {
 	
 	/**
 	 * Get the total shooting rating of the squad
-	 * @return
+	 * @return Sum of squad shooting ratings
 	 */
 	private int getShootingTotal() {
 		int result = 0;
@@ -95,7 +96,7 @@ public class Squad {
 	
 	/**
 	 * Get the average shooting rating of the squad
-	 * @return
+	 * @return Average of squad shooting ratings
 	 */
 	public double getShootingAvg() {
 		return (double) this.getShootingTotal() / (double) this.getSize();
@@ -103,7 +104,7 @@ public class Squad {
 	
 	/**
 	 * Get the total checking rating of the squad
-	 * @return
+	 * @return Sum of squad checking ratings
 	 */
 	private int getCheckingTotal() {
 		int result = 0;
@@ -115,7 +116,7 @@ public class Squad {
 	
 	/**
 	 * Get the average checking rating of the squad
-	 * @return
+	 * @return Average of squad checking ratings
 	 */
 	public double getCheckingAvg() {
 		return (double) this.getCheckingTotal() / (double) this.getSize();

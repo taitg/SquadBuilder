@@ -5,25 +5,37 @@ import java.util.Collections;
 
 /**
  * Class representing an organization of the tournament
- * @author taitg
+ * @author Geordie Tait
  *
  */
 public class Tournament {
 
+	// the players object containing the list of all players
 	private Players players;
+	
+	// the maximum number of players per squad
 	private int maxPlayers;
+	
+	// the desired number of squads
 	private int numSquads;
+	
+	// the list of squads in the tournament
 	private ArrayList<Squad> squads;
+	
+	// the waitlist of players
 	private ArrayList<Player> waitList;
+	
+	// the total variance value among all 3 ratings for each squad
 	private double variance;
 	
 	/**
 	 * Main constructor
-	 * @param players
-	 * @param numSquads
+	 * @param players Players object
+	 * @param numSquads Desired number of squads
 	 */
 	public Tournament(Players players, int numSquads) {
 		
+		// initialize fields
 		this.players = players;
 		this.numSquads = numSquads;
 		maxPlayers = players.getNumber() / numSquads;
@@ -39,20 +51,23 @@ public class Tournament {
 	
 	/**
 	 * Constructor for copying an existing tournament object
-	 * @param original
+	 * @param original The tournament object to copy
 	 */
 	public Tournament(Tournament original) {
 		
+		// initialize fields
 		players = original.players;
 		numSquads = original.numSquads;
 		maxPlayers = original.maxPlayers;
 		variance = -1.0;
 		
+		// copy squads
 		squads = new ArrayList<Squad>();
 		for (Squad s : original.getSquads()) {
 			squads.add(new Squad(s));
 		}
 		
+		// copy waitlist
 		waitList = new ArrayList<Player>();
 		for (Player p : original.getWaitList()) {
 			waitList.add(p);
@@ -61,7 +76,7 @@ public class Tournament {
 	
 	/**
 	 * Get the list of all players in the tournament
-	 * @return
+	 * @return List of all players
 	 */
 	public ArrayList<Player> getPlayers() {
 		return players.getList();
@@ -69,7 +84,7 @@ public class Tournament {
 	
 	/**
 	 * Get the list of squads in the tournament
-	 * @return
+	 * @return List of squads
 	 */
 	public ArrayList<Squad> getSquads() {
 		return squads;
@@ -77,7 +92,7 @@ public class Tournament {
 	
 	/**
 	 * Get the waitlist for the tournament (initially all players)
-	 * @return
+	 * @return Waitlist of players
 	 */
 	public ArrayList<Player> getWaitList() {
 		return waitList;
@@ -118,13 +133,15 @@ public class Tournament {
 			}
 			squads.add(s);
 		}
+		
+		// pre-calculate the variance for this tournament
 		getVariance();
 	}
 	
 	/**
 	 * Calculate variance for a list of doubles
-	 * @param values
-	 * @return
+	 * @param values List of double values
+	 * @return Variance for the list of doubles
 	 */
 	private static double calcVariance(ArrayList<Double> values) {
 		
@@ -146,7 +163,7 @@ public class Tournament {
 	
 	/**
 	 * Get the variance in the skating averages of squads
-	 * @return
+	 * @return Variance in skating averages
 	 */
 	public double getSkatingVariance() {
 		
@@ -162,7 +179,7 @@ public class Tournament {
 	
 	/**
 	 * Get the variance in the shooting averages of squads
-	 * @return
+	 * @return Variance in shooting averages
 	 */
 	public double getShootingVariance() {
 		
@@ -178,7 +195,7 @@ public class Tournament {
 	
 	/** 
 	 * Get the variance in the checking averages of squads
-	 * @return
+	 * @return Variance in checking averages
 	 */
 	public double getCheckingVariance() {
 		
@@ -194,18 +211,22 @@ public class Tournament {
 	
 	/**
 	 * Get the sum of the variances for all ratings of squads
-	 * @return
+	 * @return Total variance in all ratings
 	 */
 	public double getVariance() {
-		if (variance < 0.0)
-			return getSkatingVariance() + getShootingVariance() + getCheckingVariance();
+		
+		// determine the variance if it hasn't been set yet
+		if (variance < 0.0) {
+			variance = getSkatingVariance() + getShootingVariance() + getCheckingVariance();
+			return variance;
+		}
 		else
 			return variance;
 	}
 	
 	/**
 	 * Get the maximum number of players per team
-	 * @return
+	 * @return Max players per team
 	 */
 	public int getMaxPlayers() {
 		return maxPlayers;
@@ -215,16 +236,16 @@ public class Tournament {
 	 * Print tournament values (for debugging)
 	 */
 	public void print() {
-//		for (Squad s : squads) {
-//			System.out.print("Squad: " + s.getSize() + " - ");
-//			System.out.format("%.2f, ", s.getSkatingAvg());
-//			System.out.format("%.2f, ", s.getShootingAvg());
-//			System.out.format("%.2f\n", s.getCheckingAvg());
-//		}
-//		System.out.println("Waitlist: " + waitList.size());
-//		System.out.format("\nVariances: %.2f, ", getSkatingVariance());
-//		System.out.format("%.2f, ", getShootingVariance());
-//		System.out.format("%.2f", getCheckingVariance());
+		for (Squad s : squads) {
+			System.out.print("Squad: " + s.getSize() + " - ");
+			System.out.format("%.2f, ", s.getSkatingAvg());
+			System.out.format("%.2f, ", s.getShootingAvg());
+			System.out.format("%.2f\n", s.getCheckingAvg());
+		}
+		System.out.println("Waitlist: " + waitList.size());
+		System.out.format("\nVariances: %.2f, ", getSkatingVariance());
+		System.out.format("%.2f, ", getShootingVariance());
+		System.out.format("%.2f", getCheckingVariance());
 		System.out.format("\nTotal: %.2f\n", getVariance());
 	}
 }

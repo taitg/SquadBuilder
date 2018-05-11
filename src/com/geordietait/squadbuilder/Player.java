@@ -4,19 +4,26 @@ import java.util.ArrayList;
 
 /**
  * Class for objects representing players
- * @author taitg
+ * @author Geordie Tait
  *
  */
 public class Player {
 
+	// the player ID string
 	private String _id;
+	
+	// the player's last name
 	private String lastName;
+	
+	// the player's first name
 	private String firstName;
+	
+	// list of the player's skills
 	private ArrayList<Skill> skills;
 	
 	/**
 	 * Get the player ID
-	 * @return
+	 * @return Player ID string
 	 */
 	public String getID() {
 		return _id;
@@ -24,7 +31,7 @@ public class Player {
 	
 	/**
 	 * Get the player's first name
-	 * @return
+	 * @return Player first name
 	 */
 	public String getFirstName() {
 		return firstName;
@@ -32,7 +39,7 @@ public class Player {
 	
 	/**
 	 * Get the player's last name
-	 * @return
+	 * @return Player last name
 	 */
 	public String getLastName() {
 		return lastName;
@@ -40,7 +47,7 @@ public class Player {
 	
 	/**
 	 * Get the player's whole name
-	 * @return
+	 * @return Player name
 	 */
 	public String getName() {
 		return firstName + " " + lastName;
@@ -48,7 +55,7 @@ public class Player {
 	
 	/**
 	 * Get the player's skating rating
-	 * @return
+	 * @return Player skating rating
 	 */
 	public int getSkatingRating() {
 		int result = 0;
@@ -61,7 +68,7 @@ public class Player {
 	
 	/**
 	 * Get the player's shooting rating
-	 * @return
+	 * @return Player shooting rating
 	 */
 	public int getShootingRating() {
 		int result = 0;
@@ -74,7 +81,7 @@ public class Player {
 	
 	/**
 	 * Get the player's checking rating
-	 * @return
+	 * @return Player checking rating
 	 */
 	public int getCheckingRating() {
 		int result = 0;

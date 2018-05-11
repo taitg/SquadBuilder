@@ -7,40 +7,51 @@ import java.util.Random;
 
 /**
  * Class for genetic optimization algorithm and associated methods/data
- * @author taitg
+ * @author Geordie Tait
  *
  */
 public class Population {
 
+	// the list of individuals in the population
 	private ArrayList<Tournament> individuals;
+	
+	// the maximum number of individuals in a generation
 	private int maxPopulation;
+	
+	// the players object containing the list of all players
 	private Players players;
+	
+	// the desired number of squads
 	private int numSquads;
 	
 	/**
-	 * Constructor
-	 * @param players
-	 * @param numSquads
-	 * @param maxPop
+	 * Constructor for Population
+	 * @param players Players object
+	 * @param numSquads Desired number of squads
+	 * @param maxPop Maximum population per generation
 	 */
 	public Population(Players players, int numSquads, int maxPop) {
 		
+		// initialize fields
 		individuals = new ArrayList<Tournament>();
 		maxPopulation = maxPop;
 		this.players = players;
 		this.numSquads = numSquads;
 		
+		// fill each tournament with randomized squad assignments
 		for (int i = 0; i < maxPop; i++) {
 			Tournament t = new Tournament(players, numSquads);
 			t.fillSquadsRandom();
 			individuals.add(t);
 		}
+		
+		// sort the tournaments by fitness (variance)
 		sortByFitness();
 	}
 	
 	/**
 	 * Get the list of tournament objects being evolved
-	 * @return
+	 * @return List of individuals (tournaments)
 	 */
 	public ArrayList<Tournament> getIndividuals() {
 		return individuals;
@@ -48,7 +59,7 @@ public class Population {
 	
 	/**
 	 * Comparator class for sorting tournaments by fitness (variance)
-	 * @author taitg
+	 * @author Geordie Tait
 	 *
 	 */
 	private class FitnessComparator implements Comparator<Tournament> {
@@ -70,6 +81,7 @@ public class Population {
 	 */
 	public void nextGeneration() {
 		
+		// proportion of individuals which will survive each generation
 		double survivalRate = 0.1;
 		int numSurvivors = (int) (maxPopulation * survivalRate);
 		
@@ -79,10 +91,17 @@ public class Population {
 		// reproduce each of the survivors with mutations (single parent reproduction)
 		for (int i = 0; i < numSurvivors; i++) {
 			
+			// determine the number of children per survivor
+			// this is set so that the second generation will have:
+			//	- [survivalrate] survivors
+			//	- [survivalrate] new random individuals
+			//	- the rest are new mutant children (up to maxPopulation)
 			int numChildren = (int) ((1 - survivalRate*2) / survivalRate);
+			
+			// create the children
 			for (int j = 0; j < numChildren; j++) {
 				
-				// create new individual
+				// create a new individual
 				Tournament t = new Tournament(individuals.get(i));
 				
 				// mutate (swap players) between random squads
@@ -102,16 +121,18 @@ public class Population {
 			individuals.add(t);
 		}
 		
+		// sort the tournaments by fitness (variance)
 		sortByFitness();
 	}
 
 	/**
 	 * Perform mutation (player swaps) between squads
-	 * @param t
+	 * @param t Tournament to mutate
 	 */
 	private void mutateSquads(Tournament t) {
 		Random rand = new Random();
 		
+		// mutate at least once, sometimes randomly twice
 		for (int i = 0; i < 1+rand.nextInt(2); i++) {
 			
 			// pick 2 random distinct squads
@@ -136,12 +157,13 @@ public class Population {
 	
 	/**
 	 * Perform mutation (player swaps) between a squad and the waitlist
-	 * @param t
+	 * @param t Tournament to mutate
 	 */
 	private void mutateSquadWithWaitlist(Tournament t) {
 		if (t.getWaitList().size() == 0) return;
 		Random rand = new Random();
 		
+		// mutate 0 times or 1, randomly
 		for (int i = 0; i < rand.nextInt(2); i++) {
 			
 			// pick a random squad
@@ -161,13 +183,13 @@ public class Population {
 	
 	/**
 	 * Run the genetic algorithm for a set amount of time
+	 * @param milliseconds How many ms to run for
 	 */
 	public void evolve(int milliseconds) {
 		
 		long startTime = System.currentTimeMillis();
 		while (System.currentTimeMillis() - startTime < milliseconds) {
 			nextGeneration();
-			//individuals.get(0).print();
 		}
 	}
 }

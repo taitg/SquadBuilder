@@ -2,17 +2,20 @@ package com.geordietait.squadbuilder;
 
 /**
  * Class representing the skills for a player
- * @author taitg
+ * @author Geordie Tait
  *
  */
 public class Skill {
 	
+	// the type of the skill
 	private String type;
+	
+	// the player's rating in the skill
 	private int rating;
 	
 	/**
 	 * Get the type of skill
-	 * @return
+	 * @return Skill type string
 	 */
 	public String getType() {
 		return type;
@@ -20,7 +23,7 @@ public class Skill {
 	
 	/**
 	 * Get the rating in the particular skill
-	 * @return
+	 * @return Skill rating number
 	 */
 	public int getRating() {
 		return rating;
