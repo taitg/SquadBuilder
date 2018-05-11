@@ -18,8 +18,8 @@ To run the server:
 java -jar squadbuilder.jar [PORT] [JSON_LOCATION]
 
 where:
-* PORT, if entered, is a port number
-* JSON_LOCATION, if entered, is either a file or URL containing properly formatted player data
+* PORT, if entered, is a port number (default 8080)
+* JSON_LOCATION, if entered, is either a file or URL containing properly formatted player data (default players.json)
 
 To use the webpage:
 
