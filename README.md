@@ -3,7 +3,7 @@
 Description
 ===========
 
-This application creates equally matched hockey squads from a collection of players. Each player is assumed to have an assigned rating for 3 skills: skating, shooting, and checking. Player data is read from JSON and the user is served via a webpage.
+This application creates equally matched hockey squads from a collection of players. Each player is assumed to have an assigned rating for 3 skills - skating, shooting, and checking - and it is assumed that skills cannot have a negative rating. Player data is read from JSON and the user is served via a webpage.
 
 Optimization Algorithm
 ======================
