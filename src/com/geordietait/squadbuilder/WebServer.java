@@ -55,8 +55,15 @@ public class WebServer extends Thread {
 		// (can be entered as a filename or a URL)
 		JsonReader json = new JsonReader("players.json");
 		players = json.getData();
+		
+		// check if player data is good
 		if (players == null) {
 			System.err.println("Could not read player data from JSON.");
+			System.exit(-1);
+		}
+		
+		if (players.checkPlayers() == false) {
+			System.err.println("Invalid player data.");
 			System.exit(-1);
 		}
 		

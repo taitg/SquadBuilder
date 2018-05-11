@@ -14,6 +14,16 @@ public class Skill {
 	private int rating;
 	
 	/**
+	 * Basic constructor
+	 * @param type Type of skill
+	 * @param rating Rating in the skill
+	 */
+	public Skill(String type, int rating) {
+		this.type = type;
+		this.rating = rating;
+	}
+	
+	/**
 	 * Get the type of skill
 	 * @return Skill type string
 	 */

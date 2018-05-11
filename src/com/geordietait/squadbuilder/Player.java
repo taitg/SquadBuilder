@@ -22,6 +22,20 @@ public class Player {
 	private ArrayList<Skill> skills;
 	
 	/**
+	 * Basic constructor
+	 * @param _id Player ID
+	 * @param lastName Player last name
+	 * @param firstName Player first name
+	 * @param skills Player skills list
+	 */
+	public Player(String _id, String lastName, String firstName, ArrayList<Skill> skills) {
+		this._id = _id;
+		this.lastName = lastName;
+		this.firstName = firstName;
+		this.skills = skills;
+	}
+	
+	/**
 	 * Get the player ID
 	 * @return Player ID string
 	 */
@@ -58,7 +72,7 @@ public class Player {
 	 * @return Player skating rating
 	 */
 	public int getSkatingRating() {
-		int result = 0;
+		int result = -1;
 		for (Skill s : skills) {
 			if (s.getType().equals("Skating"))
 				result = s.getRating();
@@ -71,7 +85,7 @@ public class Player {
 	 * @return Player shooting rating
 	 */
 	public int getShootingRating() {
-		int result = 0;
+		int result = -1;
 		for (Skill s : skills) {
 			if (s.getType().equals("Shooting"))
 				result = s.getRating();
@@ -84,7 +98,7 @@ public class Player {
 	 * @return Player checking rating
 	 */
 	public int getCheckingRating() {
-		int result = 0;
+		int result = -1;
 		for (Skill s : skills) {
 			if (s.getType().equals("Checking"))
 				result = s.getRating();
