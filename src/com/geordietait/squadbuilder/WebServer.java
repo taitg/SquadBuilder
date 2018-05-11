@@ -39,10 +39,10 @@ public class WebServer extends Thread {
 	private String jsonLocation;
 	
 	// players object containing the list of all players
-	Players players;
+	private Players players;
 	
 	// the tournament arrangement to display to the user
-	Tournament tournament;
+	private Tournament tournament;
 
 	/**
 	 * Constructor for WebServer
