@@ -277,7 +277,11 @@ class Testing {
 			assertEquals(1, pop.getIndividuals().get(0).getSquads().get(i).getMembers().size());
 		}
 		
-		// test that variances changed for the next gen
+		// advance 100 generations
+		for (int i = 0; i < 1000; i++)
+			pop.nextGeneration();
+		
+		// test that variances changed for the final gen
 		boolean completeMatch = true;
 		for (int i = 0; i < pop.getIndividuals().size(); i++) {
 			if (pop.getIndividuals().get(i).getVariance() != initialVariances.get(i))
