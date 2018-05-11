@@ -162,12 +162,12 @@ public class Population {
 	/**
 	 * Run the genetic algorithm for a set amount of time
 	 */
-	public void evolve() {
+	public void evolve(int milliseconds) {
 		
 		long startTime = System.currentTimeMillis();
-		while (System.currentTimeMillis() - startTime < 2500) {
+		while (System.currentTimeMillis() - startTime < milliseconds) {
 			nextGeneration();
-			individuals.get(0).print();
+			//individuals.get(0).print();
 		}
 	}
 }

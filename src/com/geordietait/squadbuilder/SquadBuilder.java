@@ -14,7 +14,7 @@ public class SquadBuilder {
 	public static void main(String[] args) {
 
 		// start the web server
-		WebServer server = new WebServer(8083); // TODO cmd line args
+		WebServer server = new WebServer(8086); // TODO cmd line args
 		server.runServer();
 		
 	}

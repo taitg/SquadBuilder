@@ -53,7 +53,7 @@ public class WebServer extends Thread {
 		
 		// read player data from JSON
 		try {
-			Gson gson = new Gson();
+			Gson gson = new Gson(); // TODO prepare for API
 			players = gson.fromJson(new FileReader("players.json"), Players.class);
 			tournament = new Tournament(players, 1);
 		}
@@ -189,7 +189,7 @@ public class WebServer extends Thread {
 						
 						fileName = fileNameSplit[0];
 						
-						if (fileName.equals("") || fileName.equals("index.html") || fileName.startsWith("make?") || fileName.equals("reset"))
+						if (fileName.equals("") || fileName.equals("index.html") || fileName.startsWith("make?"))
 							output = generateOutput(fileName);
 					}
 				}
@@ -247,12 +247,15 @@ public class WebServer extends Thread {
 		private String generateHeader(boolean badRequest, boolean notFound, File f) {
 			String header = "HTTP/1.1 ";
 
+			// response code
 			if (badRequest) header += "400 Bad Request\r\n";
 			else if (notFound) header += "404 Not Found\r\n";
 			else header += "200 OK\r\n";
 			
+			// server name and version
 			header += "Server: SquadBuilder/1.0\r\n";
 			
+			// file info
 			if (!badRequest && !notFound && f.exists()) {
 				SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss zzz");
 				header += "Last-Modified: " + sdf.format(f.lastModified()) + "\r\n";
@@ -270,21 +273,24 @@ public class WebServer extends Thread {
 		 */
 		private String generateOutput(String request) {
 			System.out.println("Req: '"+request+"'");
-			String htmlOut = "";
 			
-			htmlOut += "<html><body bgcolor=5588ee>";
+			// begin html, set the title, make the top bar
+			String htmlOut = generateTopHtml();
+			
+			// make the input and buttons
 			htmlOut += generateFormHtml();
 			
+			// make the waitlist
 			if (request.equals("")) {
 				tournament = new Tournament(players, 1);
 				htmlOut += generateWaitListHtml();
 			}
 			
+			// make the squads if requested
 			else if (request.startsWith("make")) {
 				
-				// retrieve desired number of squads and check for bad inputs
+				// parse desired number of squads and check for bad inputs
 				String makeSplit[] = request.split("=");
-				
 				if (makeSplit.length < 2)
 					return generateErrorHtml("You must enter a number.");
 						
@@ -299,19 +305,19 @@ public class WebServer extends Thread {
 				if (numSquads < 2 || numSquads > players.getNumber())
 					return generateErrorHtml("Number of squads must be greater than 1 and less than the number of players (" + players.getNumber() + ").");
 	
-				// create first generation
+				// create the first generation of random individuals (tournaments)
 				Population pop = new Population(players, numSquads, 500);
 				
-				// run genetic algorithm
-				pop.evolve();
+				// run the genetic algorithm for a set amount of milliseconds
+				pop.evolve(2500);
 				
 				// pick the best individual
 				tournament = pop.getIndividuals().get(0);
 				
-				// display wait list
+				// display the wait list
 				htmlOut += generateWaitListHtml();
 				
-				// display squads
+				// display the squads
 				int count = 1;
 				for (Squad s : tournament.getSquads()) {
 					htmlOut += generateSquadHtml(count, s);
@@ -319,7 +325,23 @@ public class WebServer extends Thread {
 				}
 			}
 			
-			htmlOut += "</body></html>";
+			// make the closing tags
+			htmlOut += generateEndHtml();
+			return htmlOut;
+		}
+
+		/**
+		 * Generate HTML for the title and the top bar
+		 * @return
+		 */
+		private String generateTopHtml() { // TODO clean up
+			String htmlOut = "<html><head><title>SquadBuilder</title></head>";
+			htmlOut += "<body bgcolor=ddeeff><center>";
+			htmlOut += "<link rel='stylesheet' href='https://www.w3schools.com/w3css/4/w3.css'>";
+			htmlOut += "<div class='w3-card-4' style='width:100%'><div class='w3-display-container'>";
+			htmlOut += "<img src='image.jpg' style='width:100%' alt='Hockey'>";
+			htmlOut += "<div class='w3-display-bottommiddle w3-container w3-text-light-grey w3-wide w3-padding-64'>";
+			htmlOut += "<h1 style='text-shadow:3px 3px 0 #444'><big><b>SquadBuilder</b></big></h1></div></div></div>";
 			return htmlOut;
 		}
 
@@ -330,14 +352,19 @@ public class WebServer extends Thread {
 		 */
 		private String generateFormHtml() {
 			
-			String htmlOut = "<form method='get' action='/make'>";
-			htmlOut += "<input type='text' name='squads'>";
-			htmlOut += "<input type='submit' value='Make Squads'>";
+			String htmlOut = "<div class='w3-card-4 w3-round w3-margin w3-padding-16 w3-white' style='max-width: 50%'>";
+			htmlOut += "<div class='w3-container w3-margin'>";
+			htmlOut += "<form method='get' action='/make'>";
+			htmlOut += "<div class='w3-panel w3-border-top w3-border-bottom w3-half'>";
+			htmlOut += "<input type='text' name='squads' placeholder='How many squads?' ";
+			htmlOut += "class='w3-input w3-border-0 w3-xlarge w3-round' style='width: 100%'></div>";
+			htmlOut += "<input type='submit' value='Make' class='w3-button w3-white w3-large w3-half w3-round-large'>";
 			htmlOut += "</form>";
 			
 			htmlOut += "<form method='post' action='/'>";
-			htmlOut += "<input type='submit' value='Reset'>";
-			htmlOut += "</form>";
+			htmlOut += "<div class='w3-container w3-half'></div>";
+			htmlOut += "<input type='submit' value='Reset' class='w3-button w3-white w3-large w3-half w3-round-large'>";
+			htmlOut += "</form></div></div>";
 			return htmlOut;
 		}
 
@@ -349,8 +376,9 @@ public class WebServer extends Thread {
 		 */
 		private String generateSquadHtml(int count, Squad s) {
 			
-			String htmlOut = "<h2>Squad " + count + "</h2>";
-			htmlOut += "<table><tr>";
+			String htmlOut = "<div class='w3-card-4 w3-round w3-margin w3-padding-16 w3-white' style='max-width: 50%'>";
+			htmlOut += "<h2>Squad " + count + "</h2>";
+			htmlOut += "<table class='w3-table w3-centered w3-hoverable w3-striped' style='max-width: 100%'><tr>";
 			htmlOut += "<td><b>Player</b></td>";
 			htmlOut += "<td><b>Skating</b></td>";
 			htmlOut += "<td><b>Shooting</b></td>";
@@ -362,10 +390,10 @@ public class WebServer extends Thread {
 				htmlOut += "<td>" + p.getCheckingRating() + "</td></tr>";
 			}
 			htmlOut += "<tr><td><b>Average</b></td>";
-			htmlOut += "<td>" + Math.round(s.getSkatingAvg()) + "</td>";
-			htmlOut += "<td>" + Math.round(s.getShootingAvg()) + "</td>";
-			htmlOut += "<td>" + Math.round(s.getCheckingAvg()) + "</td></tr>";
-			htmlOut += "</table>";
+			htmlOut += "<td><b>" + Math.round(s.getSkatingAvg()) + "</b></td>";
+			htmlOut += "<td><b>" + Math.round(s.getShootingAvg()) + "</b></td>";
+			htmlOut += "<td><b>" + Math.round(s.getCheckingAvg()) + "</b></td></tr>";
+			htmlOut += "</table></div>";
 			return htmlOut;
 		}
 
@@ -374,19 +402,26 @@ public class WebServer extends Thread {
 		 * @return
 		 */
 		private String generateWaitListHtml() {
-			String htmlOut = "<h2>Wait list</h2>";
-			htmlOut += "<table><tr>";
-			htmlOut += "<td><b>Player</b></td>";
-			htmlOut += "<td><b>Skating</b></td>";
-			htmlOut += "<td><b>Shooting</b></td>";
-			htmlOut += "<td><b>Checking</b></td></tr>";
-			for (Player p : tournament.getWaitList()) { // TODO sort alphabetical
-				htmlOut += "<tr><td>" + p.getName() + "</td>";
-				htmlOut += "<td>" + p.getSkatingRating() + "</td>";
-				htmlOut += "<td>" + p.getShootingRating() + "</td>";
-				htmlOut += "<td>" + p.getCheckingRating() + "</td></tr>";
+			String htmlOut = "<div class='w3-card-4 w3-round w3-margin w3-padding-16 w3-white' style='max-width: 50%'>";
+			htmlOut += "<h2>Wait list</h2>";
+			if (tournament.getWaitList().size() > 0) {
+				htmlOut += "<table class='w3-table w3-centered w3-hoverable w3-striped' style='max-width: 100%'><tr>";
+				htmlOut += "<td><b>Player</b></td>";
+				htmlOut += "<td><b>Skating</b></td>";
+				htmlOut += "<td><b>Shooting</b></td>";
+				htmlOut += "<td><b>Checking</b></td></tr>";
+				for (Player p : tournament.getWaitList()) { // TODO sort alphabetical
+					htmlOut += "<tr><td>" + p.getName() + "</td>";
+					htmlOut += "<td>" + p.getSkatingRating() + "</td>";
+					htmlOut += "<td>" + p.getShootingRating() + "</td>";
+					htmlOut += "<td>" + p.getCheckingRating() + "</td></tr>";
+				}
+				htmlOut += "</table>";
 			}
-			htmlOut += "</table>";
+			else {
+				htmlOut += "<i>Empty</i>";
+			}
+			htmlOut += "</div>";
 			return htmlOut;
 		}
 		
@@ -396,11 +431,22 @@ public class WebServer extends Thread {
 		 * @return
 		 */
 		private String generateErrorHtml(String error) {
-			String htmlOut = "<html><body bgcolor=5588ee>";
+			String htmlOut = generateTopHtml();
 			htmlOut += generateFormHtml();
-			htmlOut += "Error: " + error;
-			htmlOut += "</body></html>";
+			htmlOut += "<div class='w3-panel w3-border w3-border-red w3-round' style='max-width: 50%'>";
+			htmlOut += "<b>Error:</b> " + error + "</div>";
+			tournament = new Tournament(players, 1);
+			htmlOut += generateWaitListHtml();
+			htmlOut += generateEndHtml();
 			return htmlOut;
+		}
+		
+		/**
+		 * Generate closing tags
+		 * @return
+		 */
+		private String generateEndHtml() {
+			return "</center></body></html>";
 		}
 	}
 }
