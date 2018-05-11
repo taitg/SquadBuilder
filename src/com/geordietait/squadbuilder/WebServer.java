@@ -216,6 +216,7 @@ public class WebServer extends Thread {
 					isNotFound = true;
 				
 				// transmit content over existing connection
+				// first send HTTP header
 				String header = generateHTTPHeader(isBadRequest, isNotFound, f);
 				out.write(header.getBytes("US-ASCII"));
 				out.flush();
@@ -223,16 +224,16 @@ public class WebServer extends Thread {
 				// send file if OK and applicable
 				if (!isBadRequest && !isNotFound && output.equals("")) {					
 					FileInputStream fStream = new FileInputStream(f);
-		            BufferedInputStream fBuffer = new BufferedInputStream(fStream);
-		            int n;
+					BufferedInputStream fBuffer = new BufferedInputStream(fStream);
+					int n;
 		            
-		            while ((n = fBuffer.read(bytes)) > 0) {
-		                out.write(bytes, 0, n);
-		                out.flush();
-		            }
+					while ((n = fBuffer.read(bytes)) > 0) {
+						out.write(bytes, 0, n);
+						out.flush();
+					}
 		            
-		            fBuffer.close();
-		            fStream.close();
+					fBuffer.close();
+					fStream.close();
 				}
 				
 				// otherwise send output string if OK
