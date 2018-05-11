@@ -10,13 +10,13 @@ import java.util.ArrayList;
 public class Players {
 
 	// the list of all players in the tournament
-	private ArrayList<Player> playerList;
+	private ArrayList<Player> players;
 	
 	/**
 	 * Basic constructor
 	 */
 	public Players() {
-		playerList = new ArrayList<Player>();
+		players = new ArrayList<Player>();
 	}
 	
 	/**
@@ -24,7 +24,7 @@ public class Players {
 	 * @return List of players
 	 */
 	public ArrayList<Player> getList() {
-		return playerList;
+		return players;
 	}
 	
 	/**
@@ -32,7 +32,7 @@ public class Players {
 	 * @return Number of players
 	 */
 	public int getNumber() {
-		return playerList.size();
+		return players.size();
 	}
 	
 	/**
@@ -41,7 +41,7 @@ public class Players {
 	 */
 	public boolean checkPlayers() {
 		
-		for (Player p : playerList) {
+		for (Player p : players) {
 			
 			// check if any player has no name(s)
 			if (p.getFirstName().isEmpty() && p.getLastName().isEmpty()) {

@@ -13,7 +13,7 @@ public class Squad {
 	private ArrayList<Player> members;
 	
 	/**
-	 * Main constructor
+	 * Basic constructor
 	 */
 	public Squad() {
 		members = new ArrayList<Player>();

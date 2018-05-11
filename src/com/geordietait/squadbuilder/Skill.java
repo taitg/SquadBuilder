@@ -1,7 +1,7 @@
 package com.geordietait.squadbuilder;
 
 /**
- * Class representing the skills for a player
+ * Class representing a skill for a player
  * @author Geordie Tait
  *
  */

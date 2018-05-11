@@ -14,7 +14,16 @@ import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
 /**
- * Class for serving web requests
+ * Class for serving web requests for SquadBuilder.
+ * 
+ * A main thread listens for connections and then spawns worker
+ * threads to handle each one.
+ * 
+ * This is not implemented with current, modern practices, but it is
+ * functional and this is how I learned. A simpler, easier-to-edit
+ * implementation would make use of a library or framework for
+ * connecting and sending HTML.
+ * 
  * @author Geordie Tait
  *
  */
@@ -25,6 +34,9 @@ public class WebServer extends Thread {
 		
 	// port for the WebServer to listen on
 	private int port;
+	
+	// location of JSON data (filename or URL)
+	private String jsonLocation;
 	
 	// players object containing the list of all players
 	Players players;
@@ -37,8 +49,9 @@ public class WebServer extends Thread {
 	 * 
 	 * @param port	Port number to listen on
 	 */
-	public WebServer(int port) {
+	public WebServer(int port, String jsonLocation) {
 		this.port = port;
+		this.jsonLocation = jsonLocation;
 	}
 	
 	/**
@@ -53,7 +66,7 @@ public class WebServer extends Thread {
 		
 		// attempt to read player data from JSON
 		// (can be entered as a filename or a URL)
-		JsonReader json = new JsonReader("players.json");
+		JsonReader json = new JsonReader(jsonLocation);
 		players = json.getData();
 		
 		// check if player data is good

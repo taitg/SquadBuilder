@@ -1,7 +1,7 @@
 package com.geordietait.squadbuilder;
 
 /**
- * Class for generating the HTML strings for the server to send out
+ * Class for generating HTML strings for the SquadBuilder WebServer to send out
  * @author Geordie Tait
  *
  */

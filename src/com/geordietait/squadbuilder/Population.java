@@ -6,7 +6,17 @@ import java.util.Comparator;
 import java.util.Random;
 
 /**
- * Class for genetic optimization algorithm and associated methods/data
+ * Class for genetic optimization algorithm and associated methods/data.
+ * 
+ * The algorithm creates a population of randomly assigned squads, given
+ * a desired number of squads, then creates successive generations for a
+ * given time period before returning the best result found. In each
+ * generation, only a proportion of individuals with the best fitness
+ * survive (calculated using the variance in skating, shooting, and checking 
+ * ratings between the squads). These individuals reproduce with mutations,
+ * implemented as random swaps between the squads or the waitlist. A number
+ * of random individuals are also added each generation.
+ * 
  * @author Geordie Tait
  *
  */
@@ -186,10 +196,8 @@ public class Population {
 	 * @param milliseconds How many ms to run for
 	 */
 	public void evolve(int milliseconds) {
-		
 		long startTime = System.currentTimeMillis();
-		while (System.currentTimeMillis() - startTime < milliseconds) {
+		while (System.currentTimeMillis() - startTime < milliseconds)
 			nextGeneration();
-		}
 	}
 }

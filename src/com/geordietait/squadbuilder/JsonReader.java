@@ -10,7 +10,7 @@ import java.net.URL;
 import com.google.gson.Gson;
 
 /**
- * Class for reading data from JSON
+ * Class for reading player data from JSON
  * @author Geordie Tait
  *
  */
@@ -40,7 +40,7 @@ public class JsonReader {
 		if (f.exists()) {
 			try {
 				Gson gson = new Gson();
-				players = gson.fromJson(new FileReader("players.json"), Players.class);
+				players = gson.fromJson(new FileReader(location), Players.class);
 			}
 			catch (IOException e) {
 				System.err.println("Error: Could not read JSON data from file.");
@@ -62,7 +62,6 @@ public class JsonReader {
 				System.exit(-1);
 			}
 		}
-		
 		return players;
 	}
 	
@@ -90,6 +89,7 @@ public class JsonReader {
 			while ((line = in.readLine()) != null)
 				result.append(line);
 			
+			// return the result
 			in.close();
 			return result.toString();
 		}
