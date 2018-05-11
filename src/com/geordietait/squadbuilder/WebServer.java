@@ -255,7 +255,7 @@ public class WebServer extends Thread {
 			// server name and version
 			header += "Server: SquadBuilder/1.0\r\n";
 			
-			// file info
+			// file info if applicable
 			if (!badRequest && !notFound && f.exists()) {
 				SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss zzz");
 				header += "Last-Modified: " + sdf.format(f.lastModified()) + "\r\n";
@@ -280,13 +280,14 @@ public class WebServer extends Thread {
 			// make the input and buttons
 			htmlOut += html.generateForm();
 			
-			// make the waitlist
-			if (request.equals("")) {
+			// display the waitlist with all the players in it
+			if (request.equals("") || request.equals("index.html")) {
 				tournament = new Tournament(players, 1);
+				html.setTournament(tournament);
 				htmlOut += html.generateWaitList();
 			}
 			
-			// make the squads if requested
+			// display the waitlist and squads as requested
 			else if (request.startsWith("make")) {
 				
 				// parse desired number of squads and check for bad inputs
@@ -313,6 +314,7 @@ public class WebServer extends Thread {
 				
 				// pick the best individual
 				tournament = pop.getIndividuals().get(0);
+				html.setTournament(tournament);
 				
 				// display the wait list
 				htmlOut += html.generateWaitList();
