@@ -5,7 +5,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -13,7 +12,6 @@ import java.net.ServerSocket;
 import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
-import com.google.gson.Gson;
 
 /**
  * Class for serving web requests
@@ -53,16 +51,17 @@ public class WebServer extends Thread {
 		// start the listening thread
 		start();
 		
-		// read player data from JSON
-		try {
-			Gson gson = new Gson(); // TODO prepare for API
-			players = gson.fromJson(new FileReader("players.json"), Players.class);
-			tournament = new Tournament(players, 1);
-		}
-		catch (IOException e) {
-			System.err.println("Error: Could not read JSON data.");
+		// attempt to read player data from JSON
+		// (can be entered as a filename or a URL)
+		JsonReader json = new JsonReader("players.json");
+		players = json.getData();
+		if (players == null) {
+			System.err.println("Could not read player data from JSON.");
 			System.exit(-1);
 		}
+		
+		// initialize tournament
+		tournament = new Tournament(players, 1);
 		
 		System.out.println("Server started. Type \"quit\" to stop");
 		System.out.println(".....................................");
@@ -197,7 +196,7 @@ public class WebServer extends Thread {
 					isNotFound = true;
 				
 				// transmit content over existing connection
-				String header = generateHeader(isBadRequest, isNotFound, f);
+				String header = generateHTTPHeader(isBadRequest, isNotFound, f);
 				out.write(header.getBytes("US-ASCII"));
 				out.flush();
 				
@@ -240,7 +239,7 @@ public class WebServer extends Thread {
 		 * @param f	File object
 		 * @return HTTP header string
 		 */
-		private String generateHeader(boolean isBadRequest, boolean isNotFound, File f) {
+		private String generateHTTPHeader(boolean isBadRequest, boolean isNotFound, File f) {
 			String header = "HTTP/1.1 ";
 
 			// response code

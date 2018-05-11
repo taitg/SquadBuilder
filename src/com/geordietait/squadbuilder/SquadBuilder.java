@@ -17,7 +17,7 @@ public class SquadBuilder {
 		if (args.length > 2) 
 			usage();
 		
-		// check if given a port, otherwise use default 8080
+		// check if given a valid port, otherwise use default 8080
 		int port = 8080;
 		if (args.length == 2) {
 			try {
@@ -31,7 +31,6 @@ public class SquadBuilder {
 		// start the web server
 		WebServer server = new WebServer(port);
 		server.runServer();
-		
 	}
 	
 	/**
