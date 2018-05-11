@@ -1,6 +1,8 @@
 package com.geordietait.squadbuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Class representing a squad of players
@@ -120,5 +122,17 @@ public class Squad {
 	 */
 	public double getCheckingAvg() {
 		return (double) this.getCheckingTotal() / (double) this.getSize();
+	}
+	
+	/**
+	 * Sort the squad's members alphabetically by player's last name
+	 */
+	public void sortSquadMembers() {
+		Collections.sort(members, new Comparator<Player>() {
+			@Override
+			public int compare(final Player p1, final Player p2) {
+				return p1.getLastName().compareTo(p2.getLastName());
+			}
+		});
 	}
 }

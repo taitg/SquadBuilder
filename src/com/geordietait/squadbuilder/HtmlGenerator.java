@@ -129,7 +129,8 @@ public class HtmlGenerator {
 		htmlOut += "<td><b>Checking</b></td></tr>";
 		
 		// data
-		for (Player p : s.getMembers()) { // TODO sort alphabetical
+		s.sortSquadMembers();
+		for (Player p : s.getMembers()) {
 			htmlOut += "<tr><td>" + p.getName() + "</td>";
 			htmlOut += "<td>" + p.getSkatingRating() + "</td>";
 			htmlOut += "<td>" + p.getShootingRating() + "</td>";
@@ -170,7 +171,8 @@ public class HtmlGenerator {
 			htmlOut += "<td><b>Checking</b></td></tr>";
 			
 			// data
-			for (Player p : tournament.getWaitList()) { // TODO sort alphabetical
+			tournament.sortWaitList();
+			for (Player p : tournament.getWaitList()) {
 				htmlOut += "<tr><td>" + p.getName() + "</td>";
 				htmlOut += "<td>" + p.getSkatingRating() + "</td>";
 				htmlOut += "<td>" + p.getShootingRating() + "</td>";

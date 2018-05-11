@@ -2,6 +2,7 @@ package com.geordietait.squadbuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Class representing an organization of the tournament
@@ -230,6 +231,18 @@ public class Tournament {
 	 */
 	public int getMaxPlayers() {
 		return maxPlayers;
+	}
+	
+	/**
+	 * Sort the waitlist alphabetically by player's last name
+	 */
+	public void sortWaitList() {
+		Collections.sort(waitList, new Comparator<Player>() {
+			@Override
+			public int compare(final Player p1, final Player p2) {
+				return p1.getLastName().compareTo(p2.getLastName());
+			}
+		});
 	}
 	
 	/**

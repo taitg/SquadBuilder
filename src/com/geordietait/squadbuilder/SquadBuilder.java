@@ -18,7 +18,7 @@ public class SquadBuilder {
 			usage();
 		
 		// check if given a valid port, otherwise use default 8080
-		int port = 8080;
+		int port = 8092;
 		if (args.length == 1 || args.length == 2) {
 			try {
 				port = Integer.valueOf(args[0]);

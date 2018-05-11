@@ -26,3 +26,4 @@ To use the webpage:
 * By default, the homepage shows all players as being on the waiting list
 * The user can enter a desired number of squads and click "Make" to generate and display balanced squads
 * The user can then click "Reset" to return all players to the waiting list
+* The waiting list and each squad are sorted alphabetically by last name
